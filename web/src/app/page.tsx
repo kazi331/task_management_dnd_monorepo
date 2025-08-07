@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { tickets as DummyTickets } from "@/lib/dummy";
-import { Edit } from "lucide-react";
+import { Delete, Edit } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { v6 } from 'uuid';
@@ -18,7 +18,7 @@ export interface Ticket {
   id: number | string;
   title: string;
   status: Status
-  descrition?: string;
+  description?: string;
 }
 const statuses = ['backlog', 'progress', 'completed']
 
@@ -30,22 +30,27 @@ export default function Home() {
 
   useEffect(() => {
     const localTickets = localStorage.getItem('tickets');
-    if (window !== undefined && localTickets) {
+    if (localTickets) {
       setTickets(JSON.parse(localTickets))
     }
   }, [])
 
+  useEffect(() => {
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+  }, [tickets]);
+
+
   const handleAddTicket = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (textValue) {
+      if (textValue.trim()) {
         const newTicket: Ticket = {
           id: v6(),
           title: textValue,
           status: 'backlog'
         }
-        setTickets([...tickets, newTicket]);
-        localStorage.setItem('tickets', JSON.stringify([...tickets, newTicket]))
+        setTickets(prev => ([...prev, newTicket]));
+        // localStorage.setItem('tickets', JSON.stringify([...tickets, newTicket]))
       } else {
         toast.error("Add ticket title first!")
       }
@@ -63,7 +68,7 @@ export default function Home() {
       if (editContent && editContentIndex !== -1) {
         const updatedTickets = tickets.toSpliced(editContentIndex, 1, editContent);
         setTickets(updatedTickets);
-        localStorage.setItem('tickets', JSON.stringify(updatedTickets))
+        // localStorage.setItem('tickets', JSON.stringify(updatedTickets))
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -76,6 +81,14 @@ export default function Home() {
   const handleChange = (key: keyof Ticket, value: string) => {
     if (editContent) {
       setEditContent({ ...editContent, [key]: value })
+    }
+  }
+
+  const handleDelete = (id: string) => {
+    try {
+      tickets.splice(tickets.findIndex(item => item.id == id), 1);
+    } catch (err: unknown) {
+      if (err instanceof Error) toast.error(err?.message || 'Failed to delete ticket!')
     }
   }
 
@@ -96,13 +109,20 @@ export default function Home() {
                   tickets.filter(item => item.status == status).reverse().map(ticket => {
                     return <Card className="py-2 px-3 m-2 rounded-sm block relative" key={ticket.id}>
                       <p className="text-sm capitalize">{ticket.title}</p>
-                      <p className="text-xs capitalize">{ticket.descrition}</p>
+                      <p className="text-xs capitalize">{ticket.description}</p>
                       <div className="flex flex-row items-center justify-between">
                         <Badge className="m-0 capitalize" variant="outline">{ticket.status} {ticket?.id.toString().slice(0, 2)}</Badge>
-                        <Button onClick={() => {
-                          setEditContent(ticket);
-                          setsheetOpen(true);
-                        }} size="icon" variant="secondary" className="w-6 h-6"><Edit className="w-full p-0.5" /> </Button>
+                        <div className="space-x-2">
+                          <Button
+                            onClick={() => {
+                              setEditContent(ticket);
+                              setsheetOpen(true);
+                            }}
+                            variant="secondary" className="w-6 h-6" aria-label="Edit Ticket"><Edit className="w-full p-0.5" /> </Button>
+                          <Button
+                            onClick={() => handleDelete(ticket.id.toString())}
+                            variant="secondary" className="w-6 h-6" aria-label="Delete Ticket"><Delete className="w-full p-0.5" /> </Button>
+                        </div>
                       </div>
                     </Card>
                   })
@@ -117,13 +137,13 @@ export default function Home() {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>{editContent?.title}</SheetTitle>
-              <SheetDescription>{editContent?.descrition}</SheetDescription>
+              <SheetDescription>{editContent?.description}</SheetDescription>
               <Badge className="m-0 capitalize" variant="outline">{editContent?.status}</Badge>
               <Input type="text" value={editContent?.title} onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('title', e.target.value)} />
-              <Textarea value={editContent?.descrition} onChange={(e) => handleChange('descrition', e.target.value)} />
-              <Select onValueChange={(status: Status) => handleChange('status', status)}>
+              <Textarea value={editContent?.description} onChange={(e) => handleChange('description', e.target.value)} />
+              <Select value={editContent?.status} onValueChange={(status: Status) => handleChange('status', status)}>
                 <SelectTrigger className="w-full capitalize">
-                  <SelectValue className="capitalize" vocab="hello" placeholder={editContent?.status} />
+                  <SelectValue className="capitalize" />
                 </SelectTrigger>
                 <SelectContent>
                   {statuses.map(item => <SelectItem value={item} key={item} className="capitalize">{item}</SelectItem>)}
@@ -131,8 +151,8 @@ export default function Home() {
               </Select>
             </SheetHeader>
             <SheetFooter className="grid grid-cols-1">
-              <Button variant="outline" onClick={() => setsheetOpen(false)}>Cancel</Button>
-              <Button variant="destructive" type="submit" onClick={handleTicketUpdate}>Save</Button>
+              <Button variant="outline" aria-label="Cancel" onClick={() => setsheetOpen(false)}>Cancel</Button>
+              <Button variant="destructive" type="submit" aria-label="Save" onClick={handleTicketUpdate}>Save</Button>
             </SheetFooter>
           </SheetContent>
         </div>
