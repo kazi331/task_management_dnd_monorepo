@@ -5,3 +5,4 @@ export interface Ticket {
   status: Status;
   description?: string;
 }
+export type IdType = string | number;
