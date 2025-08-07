@@ -56,23 +56,6 @@ export default function Home() {
     }
   }
 
-  // const handleTicketUpdate = () => {
-  //   try {
-  //     const editContentIndex: number = tickets.findIndex(ticket => ticket.id === editContent?.id);
-  //     if (editContent && editContentIndex !== -1) {
-  //       const updatedTickets = tickets.toSpliced(editContentIndex, 1, editContent);
-  //       setTickets(updatedTickets);
-  //     }
-  //   } catch (err: unknown) {
-  //     if (err instanceof Error) {
-  //       toast.error(err?.message || 'Failed to update ticket')
-  //     }
-  //   } finally {
-  //     setSheetOpen(false)
-  //   }
-  // }
-
-
   const handleDelete = (id: string) => {
     try {
       setTickets(tickets.filter(item => item.id != id))
