@@ -1,6 +1,6 @@
-import { Todo } from "@/app/page";
+import { Ticket } from "@/app/page";
 
-export const todos: Todo[] = [
+export const tickets: Ticket[] = [
   { id: 1, title: "Design landing page", status: "backlog" },
   { id: 2, title: "Implement login feature", status: "progress" },
   { id: 3, title: "Fix mobile responsiveness", status: "completed" },

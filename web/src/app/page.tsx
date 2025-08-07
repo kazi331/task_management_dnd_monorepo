@@ -7,14 +7,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { todos as DummyTodos } from "@/lib/dummy";
+import { tickets as DummyTickets } from "@/lib/dummy";
 import { Edit } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { v6 } from 'uuid';
 
 type Status = 'backlog' | 'progress' | 'completed';
-export interface Todo {
+export interface Ticket {
   id: number | string;
   title: string;
   status: Status
@@ -24,53 +24,53 @@ const statuses = ['backlog', 'progress', 'completed']
 
 export default function Home() {
   const [sheetOpen, setsheetOpen] = useState(false)
-  const [todos, setTodos] = useState<Todo[] | []>(DummyTodos);
+  const [tickets, setTickets] = useState<Ticket[] | []>(DummyTickets);
   const [textValue, setTextValue] = useState<string>('');
-  const [editContent, setEditContent] = useState<Todo | null>(null)
+  const [editContent, setEditContent] = useState<Ticket | null>(null)
 
   useEffect(() => {
-    const localTodos = localStorage.getItem('todos');
-    if (window !== undefined && localTodos) {
-      setTodos(JSON.parse(localTodos))
+    const localTickets = localStorage.getItem('tickets');
+    if (window !== undefined && localTickets) {
+      setTickets(JSON.parse(localTickets))
     }
   }, [])
 
-  const handleAddTodo = (e: any) => {
+  const handleAddTicket = (e: any) => {
     e.preventDefault();
     try {
       if (textValue) {
-        const newTodo: Todo = {
+        const newTicket: Ticket = {
           id: v6(),
           title: textValue,
           status: 'backlog'
         }
-        setTodos([...todos, newTodo]);
-        localStorage.setItem('todos', JSON.stringify([...todos, newTodo]))
+        setTickets([...tickets, newTicket]);
+        localStorage.setItem('tickets', JSON.stringify([...tickets, newTicket]))
       } else {
-        toast.error("Add todo title first!")
+        toast.error("Add ticket title first!")
       }
       setTextValue('')
     } catch (err: any) {
-      toast.error('Failed to add todo')
+      toast.error('Failed to add ticket')
     }
   }
 
-  const handleTodoUpdate = (e: any) => {
+  const handleTicketUpdate = (e: any) => {
     e.preventDefault();
     try {
-      const editContentIndex: number = todos.findIndex(todo => todo.id === editContent?.id);
+      const editContentIndex: number = tickets.findIndex(ticket => ticket.id === editContent?.id);
       if (editContent && editContentIndex !== -1) {
-        const updatedTodos = todos.toSpliced(editContentIndex, 1, editContent);
-        setTodos(updatedTodos);
-        localStorage.setItem('todos', JSON.stringify(updatedTodos))
+        const updatedTickets = tickets.toSpliced(editContentIndex, 1, editContent);
+        setTickets(updatedTickets);
+        localStorage.setItem('tickets', JSON.stringify(updatedTickets))
       }
     } catch (err: any) {
-      toast.error('Failed to update todo')
+      toast.error('Failed to update ticket')
     } finally {
       setsheetOpen(false)
     }
   }
-  const handleChange = (key: keyof Todo, value: string) => {
+  const handleChange = (key: keyof Ticket, value: string) => {
     if (editContent) {
       setEditContent({ ...editContent, [key]: value })
     }
@@ -80,7 +80,7 @@ export default function Home() {
     <div className="max-w-6xl mx-auto px-10">
       <Sheet open={sheetOpen} onOpenChange={() => setsheetOpen(pre => !pre)}>
         <h3 className="text-center my-2">Task Management Tool</h3>
-        <form onSubmit={handleAddTodo} className="px-6 mt-4 flex flex-row gap-4 ">
+        <form onSubmit={handleAddTicket} className="px-6 mt-4 flex flex-row gap-4 ">
           <Input type="text" onChange={({ target: { value } }) => setTextValue(value)} value={textValue} />
           <Button type="submit" className="w-[100px] active:bg-gray-400 cursor-pointer">Add</Button>
         </form>
@@ -90,14 +90,14 @@ export default function Home() {
               <h2 className="text-center capitalize pb-2 border-b">{status}</h2>
               <ScrollArea className="max-h-[500px] p-2 pt-0">
                 {
-                  todos.filter(item => item.status == status).reverse().map(todo => {
-                    return <Card className="py-2 px-3 m-2 rounded-sm block relative" key={todo.id}>
-                      <p className="text-sm capitalize">{todo.title}</p>
-                      <p className="text-xs capitalize">{todo.descrition}</p>
+                  tickets.filter(item => item.status == status).reverse().map(ticket => {
+                    return <Card className="py-2 px-3 m-2 rounded-sm block relative" key={ticket.id}>
+                      <p className="text-sm capitalize">{ticket.title}</p>
+                      <p className="text-xs capitalize">{ticket.descrition}</p>
                       <div className="flex flex-row items-center justify-between">
-                        <Badge className="m-0 capitalize" variant="outline">{todo.status} {todo?.id.toString().slice(0, 2)}</Badge>
+                        <Badge className="m-0 capitalize" variant="outline">{ticket.status} {ticket?.id.toString().slice(0, 2)}</Badge>
                         <Button onClick={() => {
-                          setEditContent(todo);
+                          setEditContent(ticket);
                           setsheetOpen(true);
                         }} size="icon" variant="secondary" className="w-6 h-6"><Edit className="w-full p-0.5" /> </Button>
                       </div>
@@ -129,7 +129,7 @@ export default function Home() {
             </SheetHeader>
             <SheetFooter className="grid grid-cols-1">
               <Button variant="outline" onClick={() => setsheetOpen(false)}>Cancel</Button>
-              <Button variant="destructive" type="submit" onClick={handleTodoUpdate}>Save</Button>
+              <Button variant="destructive" type="submit" onClick={handleTicketUpdate}>Save</Button>
             </SheetFooter>
           </SheetContent>
         </div>
