@@ -19,7 +19,7 @@ type TicketProps = {
 
 export default function TicketsSheet({ editContent, setEditContent, setSheetOpen: setSheetOpen, tickets, setTickets }: TicketProps) {
 
-    const handleChange = (key: keyof Ticket, value: string) => {
+    const handleInputChange = (key: keyof Ticket, value: string) => {
         if (editContent) {
             setEditContent({ ...editContent, [key]: value })
         }
@@ -41,28 +41,24 @@ export default function TicketsSheet({ editContent, setEditContent, setSheetOpen
         }
     }
     return (
-        <div className="space-y-2">
-            <SheetContent>
-                <SheetHeader>
-                    <SheetTitle>{editContent?.title}</SheetTitle>
-                    <SheetDescription>{editContent?.description}</SheetDescription>
-                    <Badge className="m-0 capitalize" variant="outline">{editContent?.status}</Badge>
-                    <Input type="text" value={editContent?.title} onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('title', e.target.value)} />
-                    <Textarea value={editContent?.description} onChange={(e) => handleChange('description', e.target.value)} />
-                    <Select value={editContent?.status} onValueChange={(status: Status) => handleChange('status', status)}>
-                        <SelectTrigger className="w-full capitalize">
-                            <SelectValue className="capitalize" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {statuses.map(item => <SelectItem value={item} key={item} className="capitalize">{item}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                </SheetHeader>
-                <SheetFooter className="grid grid-cols-1">
-                    <Button variant="outline" aria-label="Cancel" onClick={() => setSheetOpen(false)}>Cancel</Button>
-                    <Button variant="destructive" type="submit" aria-label="Save" onClick={handleTicketUpdate}>Save</Button>
-                </SheetFooter>
-            </SheetContent>
-        </div>
+        <SheetContent>
+            <SheetHeader className="space-y-2">
+                <SheetTitle>{editContent?.title}</SheetTitle>
+                <SheetDescription>{editContent?.description}</SheetDescription>
+                <Badge className="m-0 capitalize" variant="outline">{editContent?.status}</Badge>
+                <Input type="text" value={editContent?.title} onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange('title', e.target.value)} />
+                <Textarea value={editContent?.description} onChange={(e) => handleInputChange('description', e.target.value)} />
+                <Select value={editContent?.status} onValueChange={(status: Status) => handleInputChange('status', status)}>
+                    <SelectTrigger className="w-full capitalize"><SelectValue className="capitalize" /></SelectTrigger>
+                    <SelectContent>
+                        {statuses.map(item => <SelectItem value={item} key={item} className="capitalize">{item}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </SheetHeader>
+            <SheetFooter className="grid grid-cols-1">
+                <Button variant="outline" aria-label="Cancel" onClick={() => setSheetOpen(false)}>Cancel</Button>
+                <Button variant="destructive" type="submit" aria-label="Save" onClick={handleTicketUpdate}>Save</Button>
+            </SheetFooter>
+        </SheetContent>
     )
 }
