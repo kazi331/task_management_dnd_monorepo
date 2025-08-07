@@ -1,6 +1,6 @@
 'use client'
+import TicketCardContent from "@/components/TicketCardContent";
 import TicketsSheet from "@/components/TicketsSheet";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet } from "@/components/ui/sheet";
 import { tickets as DummyTickets } from "@/lib/dummy";
 import { Ticket } from "@/lib/types";
-import { Delete, Edit } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { v6 } from 'uuid';
@@ -65,47 +64,44 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-10">
+    <div className="max-w-6xl mx-auto px-4 lg:px-10">
       <Sheet open={sheetOpen} onOpenChange={() => setSheetOpen(pre => !pre)}>
         <h3 className="text-center my-2">Task Management Tool</h3>
-        <form onSubmit={handleAddTicket} className="px-6 mt-4 flex flex-row gap-4 ">
-          <Input type="text" onChange={({ target: { value } }) => setTextValue(value)} value={textValue} />
+        <form onSubmit={handleAddTicket} className="p-2 lg:px-6 mt-4 flex flex-row gap-4 ">
+          <Input type="text" onChange={({ target }) => setTextValue(target.value)} value={textValue} />
           <Button type="submit" className="w-[100px] active:bg-gray-400 cursor-pointer">Add</Button>
         </form>
-        <div className="grid grid-cols-3 p-6 pt-2 gap-10 ">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 p-2 lg:p-6 pt-2 gap-10 ">
           {
-            statuses.map(status => (<Card className="p-2" key={status}>
-              <h2 className="text-center capitalize pb-2 border-b">{status}</h2>
-              <ScrollArea className="max-h-[500px] p-2 pt-0">
-                {
-                  tickets.filter(item => item.status == status).reverse().map(ticket => {
-                    return <Card className="py-2 px-3 m-2 rounded-sm block relative" key={ticket.id}>
-                      <p className="text-sm capitalize">{ticket.title}</p>
-                      <p className="text-xs capitalize">{ticket.description}</p>
-                      <div className="flex flex-row items-center justify-between">
-                        <Badge className="m-0 capitalize" variant="outline">{ticket.status} {ticket?.id.toString().slice(0, 2)}</Badge>
-                        <div className="space-x-2">
-                          <Button
-                            onClick={() => {
-                              setEditContent(ticket);
-                              setSheetOpen(true);
-                            }}
-                            variant="secondary" className="w-6 h-6" aria-label="Edit Ticket"><Edit className="w-full p-0.5" /> </Button>
-                          <Button
-                            onClick={() => handleDelete(ticket.id.toString())}
-                            variant="secondary" className="w-6 h-6" aria-label="Delete Ticket"><Delete className="w-full p-0.5" /> </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  })
-                }
-              </ScrollArea>
-            </Card>
-            )
-            )
+            statuses.map(status => (
+              <Card className="p-2" key={status}>
+                <h2 className="text-center capitalize pb-2 border-b">{status}</h2>
+                <ScrollArea className="max-h-[500px] p-2 pt-0">
+                  {
+                    tickets.filter(item => item.status == status)
+                      .reverse()
+                      .map(ticket => (
+                        <Card className="py-2 px-3 m-2 rounded-sm block relative" key={ticket.id}>
+                          <TicketCardContent
+                            ticket={ticket}
+                            handleDelete={handleDelete}
+                            setEditContent={setEditContent}
+                            setSheetOpen={setSheetOpen}
+                          />
+                        </Card>
+                      ))
+                  }
+                </ScrollArea>
+              </Card>
+            ))
           }
         </div>
-        <TicketsSheet editContent={editContent} setEditContent={setEditContent} setSheetOpen={setSheetOpen} tickets={tickets} setTickets={setTickets} />
+        <TicketsSheet
+          editContent={editContent}
+          setEditContent={setEditContent}
+          setSheetOpen={setSheetOpen}
+          tickets={tickets}
+          setTickets={setTickets} />
       </Sheet>
       <Toaster closeButton />
     </div>
