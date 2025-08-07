@@ -35,6 +35,7 @@ export default function Home() {
     }
   }, [])
 
+  // automatically update localstorage afeter adding/deleting/updating tickets
   useEffect(() => {
     localStorage.setItem('tickets', JSON.stringify(tickets));
   }, [tickets]);
@@ -50,7 +51,6 @@ export default function Home() {
           status: 'backlog'
         }
         setTickets(prev => ([...prev, newTicket]));
-        // localStorage.setItem('tickets', JSON.stringify([...tickets, newTicket]))
       } else {
         toast.error("Add ticket title first!")
       }
@@ -68,7 +68,6 @@ export default function Home() {
       if (editContent && editContentIndex !== -1) {
         const updatedTickets = tickets.toSpliced(editContentIndex, 1, editContent);
         setTickets(updatedTickets);
-        // localStorage.setItem('tickets', JSON.stringify(updatedTickets))
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
