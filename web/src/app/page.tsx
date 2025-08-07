@@ -86,7 +86,7 @@ export default function Home() {
 
   const handleDelete = (id: string) => {
     try {
-      tickets.splice(tickets.findIndex(item => item.id == id), 1);
+      setTickets(tickets.filter(item => item.id != id))
     } catch (err: unknown) {
       if (err instanceof Error) toast.error(err?.message || 'Failed to delete ticket!')
     }
