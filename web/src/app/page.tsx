@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet } from "@/components/ui/sheet";
 import { tickets as DummyTickets, statuses } from "@/lib/dummy";
-import { Ticket } from "@/lib/types";
-import { ChangeEvent, useEffect, useState } from "react";
+import { IdType, Status, Ticket } from "@/lib/types";
+import { ChangeEvent, DragEvent, useEffect, useState, } from "react";
 import { toast, Toaster } from "sonner";
 import { v6 } from 'uuid';
 
@@ -52,7 +52,7 @@ export default function Home() {
     }
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: IdType,) => {
     try {
       setTickets(tickets.filter(item => item.id != id))
     } catch (err: unknown) {
@@ -60,6 +60,32 @@ export default function Home() {
     }
   }
 
+  // dnd functions
+  const dragStart = (e: DragEvent<HTMLDivElement>, id: IdType) => {
+    // e.preventDefault();
+    e.dataTransfer.setData('text/json', id.toString());
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.style.opacity = '0.5'
+    e.currentTarget.style.cursor = 'grabbing'
+
+  }
+  const handleDrop = (e: any, newStatus: Status) => {
+    e.preventDefault();
+    const ticketId = e.dataTransfer.getData('text/json');
+    console.log({ ticketId })
+    try {
+      setTickets(prev =>
+        prev.map(ticket =>
+          ticket.id.toString() === ticketId
+            ? { ...ticket, status: newStatus }
+            : ticket
+        )
+      );
+      toast.success('Ticket moved successfully!');
+    } catch (err) {
+      toast.error('Failed to move ticket');
+    }
+  };
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-10">
       <Sheet open={sheetOpen} onOpenChange={() => setSheetOpen(pre => !pre)}>
@@ -71,14 +97,29 @@ export default function Home() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 p-2 lg:p-6 pt-2 gap-10 ">
           {
             statuses.map(status => (
-              <Card className="p-2" key={status}>
+              <Card
+                onDragOver={e => {
+                  e.preventDefault();
+                  e.dataTransfer.effectAllowed = 'move'
+                }}
+                onDrop={e => handleDrop(e, status)}
+                className="p-2" key={status}
+              >
                 <h2 className="text-center capitalize pb-2 border-b">{status}</h2>
                 <ScrollArea className="max-h-[500px] p-2 pt-0">
                   {
                     tickets.filter(item => item.status == status)
                       .reverse()
                       .map(ticket => (
-                        <Card className="py-2 px-3 m-2 rounded-sm block relative" key={ticket.id}>
+                        <Card
+                          draggable
+                          onDragStart={(e) => dragStart(e, ticket.id)}
+                          onDragEnd={(e: DragEvent<HTMLDivElement>) => {
+                            e.currentTarget.style.cursor = 'default';
+                          }}
+                          className="py-2 px-3 m-2 rounded-sm block relative active:cursor-grabbing "
+                          key={ticket.id}
+                        >
                           <TicketCardContent
                             ticket={ticket}
                             handleDelete={handleDelete}
