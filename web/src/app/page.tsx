@@ -35,7 +35,7 @@ export default function Home() {
     }
   }, [])
 
-  const handleAddTicket = (e: any) => {
+  const handleAddTicket = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (textValue) {
@@ -50,13 +50,14 @@ export default function Home() {
         toast.error("Add ticket title first!")
       }
       setTextValue('')
-    } catch (err: any) {
-      toast.error('Failed to add ticket')
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err?.message || 'Failed to add ticket')
+      }
     }
   }
 
-  const handleTicketUpdate = (e: any) => {
-    e.preventDefault();
+  const handleTicketUpdate = () => {
     try {
       const editContentIndex: number = tickets.findIndex(ticket => ticket.id === editContent?.id);
       if (editContent && editContentIndex !== -1) {
@@ -64,8 +65,10 @@ export default function Home() {
         setTickets(updatedTickets);
         localStorage.setItem('tickets', JSON.stringify(updatedTickets))
       }
-    } catch (err: any) {
-      toast.error('Failed to update ticket')
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err?.message || 'Failed to update ticket')
+      }
     } finally {
       setsheetOpen(false)
     }
