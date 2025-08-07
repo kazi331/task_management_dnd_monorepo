@@ -1,10 +1,10 @@
-import { statuses } from "@/app/page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { statuses } from "@/lib/dummy";
 import { Status, Ticket } from "@/lib/types";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";

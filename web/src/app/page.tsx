@@ -6,14 +6,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet } from "@/components/ui/sheet";
-import { tickets as DummyTickets } from "@/lib/dummy";
+import { tickets as DummyTickets, statuses } from "@/lib/dummy";
 import { Ticket } from "@/lib/types";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { v6 } from 'uuid';
-
-
-export const statuses = ['backlog', 'progress', 'completed']
 
 export default function Home() {
   const [sheetOpen, setSheetOpen] = useState(false)

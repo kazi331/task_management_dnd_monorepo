@@ -1,7 +1,7 @@
-export type Status = 'backlog' | 'progress' | 'completed';
+export type Status = "backlog" | "progress" | "completed";
 export interface Ticket {
   id: number | string;
   title: string;
-  status: Status
+  status: Status;
   description?: string;
 }
