@@ -6,3 +6,8 @@ export interface Ticket {
   description?: string;
 }
 export type IdType = string | number;
+export interface CardType {
+  title: string;
+  id: string;
+  column: "backlog" | "todo" | "doing" | "done";
+}
