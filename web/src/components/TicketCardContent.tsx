@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction } from "react";
 
 type PropsType = { ticket: Ticket, setEditContent: Dispatch<SetStateAction<Ticket | null>>, setSheetOpen: Dispatch<SetStateAction<boolean>>, handleDelete: (id: string) => void }
 
-export default function TicketCardContent({ ticket, setEditContent, setSheetOpen, handleDelete }: PropsType) {
+function TicketCardContent({ ticket, setEditContent, setSheetOpen, handleDelete }: PropsType) {
     return (<>
         <p className="text-sm capitalize">{ticket.title}</p>
         <p className="text-xs capitalize">{ticket.description}</p>
@@ -27,3 +27,4 @@ export default function TicketCardContent({ ticket, setEditContent, setSheetOpen
     </>
     )
 }
+export default TicketCardContent

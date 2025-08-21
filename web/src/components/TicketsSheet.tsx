@@ -6,7 +6,7 @@ import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } 
 import { Textarea } from "@/components/ui/textarea";
 import { statuses } from "@/lib/dummy";
 import { Status, Ticket } from "@/lib/types";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, memo, SetStateAction } from "react";
 import { toast } from "sonner";
 
 type TicketProps = {
@@ -17,8 +17,7 @@ type TicketProps = {
     setTickets: Dispatch<SetStateAction<Ticket[]>>
 }
 
-export default function TicketsSheet({ editContent, setEditContent, setSheetOpen: setSheetOpen, tickets, setTickets }: TicketProps) {
-
+function TicketsSheet({ editContent, setEditContent, setSheetOpen: setSheetOpen, tickets, setTickets }: TicketProps) {
     const handleChange = (key: keyof Ticket, value: string) => {
         if (editContent) {
             setEditContent({ ...editContent, [key]: value })
@@ -66,3 +65,4 @@ export default function TicketsSheet({ editContent, setEditContent, setSheetOpen
         </div>
     )
 }
+export default memo(TicketsSheet)
