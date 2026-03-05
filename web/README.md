@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Tech Stack
+
+- Next.js 15.4.5
+- Tailwind CSS 4.1.11
+- TypeScript 5.9.2
+- Framer Motion 12.23.12
+- Lucide React 0.536.0
+- Radix UI 1.1.14
+
+<!-- Image -->
+
+![Kanban Board](./public/kanban-board.png)
+
 ## Getting Started
 
 First, run the development server:
